@@ -1,27 +1,40 @@
-import sys
 import queue
+import sys
 from struct import * 
 
 q = queue.Queue()
 path = sys.argv[1]
-end_of_world = sys.maxsize
+end_of_world = "the world is saved"
 file = open(path,"r")
 
-
 lines = file.readlines()
-width = len(lines[0]) -1
+width = len(lines[0].strip())
 height = len(lines)
 
 matrix = [
-    ["" for x in range(width)]
+    ["" for x in range(0, width)]
         for y in range(0, height)] 
+
+print(len(list(lines[0].strip())))
+print(len(matrix[0]))
+
+def printWorld(x,y,a,b):
+    print("************************************")
+    print(end_of_world, " ", x," ",y, " ",a ," ", b)
+    print("************************************")
+
+    for line in matrix:
+        for row in line:
+            print(row, end="")
+        print("")
+    print("")
 
 def move(p):
     # variables
     global end_of_world
     (y,x,value, time) = p
-
     #direction
+
     left = x - 1
     right = x + 1
     top = y - 1
@@ -44,9 +57,11 @@ def move(p):
             matrix[y][left] = "*"
             end_of_world = time
         else:
-            matrix[y][left] = value
-            if (end_of_world == sys.maxsize):
+            if (end_of_world == "the world is saved" or end_of_world == time):
+                matrix[y][left] = value
+            if (end_of_world == "the world is saved"):
                 q.put((y, left, value, time + 1))
+                printWorld(value,"valid_left", y, left)
 
 
     if(valid_right):
@@ -54,27 +69,33 @@ def move(p):
             matrix[y][right] = "*"
             end_of_world = time
         else:
-            matrix[y][right] = value
-            if (end_of_world == sys.maxsize):
+            if (end_of_world == "the world is saved" or end_of_world == time):
+                matrix[y][right] = value
+            if (end_of_world == "the world is saved"):
                 q.put((y, right, value, time + 1))
+                printWorld(value,"valid_right",y, right)
 
     if(valid_top):
         if (matrix[top][x] != "."):
             matrix[top][x] = "*"
             end_of_world = time
         else:
-            matrix[top][x] = value
-            if (end_of_world == sys.maxsize):
+            if (end_of_world == "the world is saved" or end_of_world == time):
+                matrix[top][x] = value
+            if (end_of_world == "the world is saved"):
                 q.put((top, x, value, time + 1))
+                printWorld(value,"valid_top",top, x)
 
     if(valid_bot):
         if (matrix[bot][x] != "."):
             matrix[bot][x] = "*"
             end_of_world = time
         else:
-            matrix[ bot][y] = value
-            if (end_of_world == sys.maxsize):
+            if (end_of_world == "the world is saved" or end_of_world == time):
+                matrix[bot][x] = value
+            if (end_of_world == "the world is saved"):
                 q.put((bot, x, value, time + 1))
+                printWorld(value,"valid_bot",bot, x)        
 
 # Read
 for y, l in enumerate(lines):
@@ -87,8 +108,8 @@ for y, l in enumerate(lines):
 while(not q.empty()):
     p = q.get()
     move(p)
-
+print(end_of_world)
 for line in matrix:
     for row in line:
         print(row, end="")
-    print("\n")
+    print("")
