@@ -15,13 +15,7 @@ matrix = [
     ["" for x in range(0, width)]
         for y in range(0, height)] 
 
-print(len(list(lines[0].strip())))
-print(len(matrix[0]))
-
 def printWorld(x,y,a,b):
-    print("************************************")
-    print(end_of_world, " ", x," ",y, " ",a ," ", b)
-    print("************************************")
 
     for line in matrix:
         for row in line:
@@ -57,11 +51,9 @@ def move(p):
             matrix[y][left] = "*"
             end_of_world = time
         else:
-            if (end_of_world == "the world is saved" or end_of_world == time):
-                matrix[y][left] = value
-            if (end_of_world == "the world is saved"):
-                q.put((y, left, value, time + 1))
-                printWorld(value,"valid_left", y, left)
+            matrix[y][left] = value
+            q.put((y, left, value, time + 1))
+                # printWorld(value,"valid_left", y, left)
 
 
     if(valid_right):
@@ -69,33 +61,27 @@ def move(p):
             matrix[y][right] = "*"
             end_of_world = time
         else:
-            if (end_of_world == "the world is saved" or end_of_world == time):
-                matrix[y][right] = value
-            if (end_of_world == "the world is saved"):
-                q.put((y, right, value, time + 1))
-                printWorld(value,"valid_right",y, right)
+            matrix[y][right] = value
+            q.put((y, right, value, time + 1))
+                # printWorld(value,"valid_right",y, right)
 
     if(valid_top):
         if (matrix[top][x] != "."):
             matrix[top][x] = "*"
             end_of_world = time
         else:
-            if (end_of_world == "the world is saved" or end_of_world == time):
-                matrix[top][x] = value
-            if (end_of_world == "the world is saved"):
-                q.put((top, x, value, time + 1))
-                printWorld(value,"valid_top",top, x)
+            matrix[top][x] = value
+            q.put((top, x, value, time + 1))
+                # printWorld(value,"valid_top",top, x)
 
     if(valid_bot):
         if (matrix[bot][x] != "."):
             matrix[bot][x] = "*"
             end_of_world = time
         else:
-            if (end_of_world == "the world is saved" or end_of_world == time):
-                matrix[bot][x] = value
-            if (end_of_world == "the world is saved"):
-                q.put((bot, x, value, time + 1))
-                printWorld(value,"valid_bot",bot, x)        
+            matrix[bot][x] = value
+            q.put((bot, x, value, time + 1))
+                # printWorld(value,"valid_bot",bot, x)        
 
 # Read
 for y, l in enumerate(lines):
@@ -103,11 +89,14 @@ for y, l in enumerate(lines):
     for x, value in enumerate(line):
         matrix[y][x] = value
         if ((value == "+") or (value == "-")):
-            q.put((y, x, value, 0))
+            q.put((y, x, value, 1))
 
 while(not q.empty()):
     p = q.get()
-    move(p)
+    (_, _, _, t) = p
+    if end_of_world != t-1:
+        move(p)
+
 print(end_of_world)
 for line in matrix:
     for row in line:
